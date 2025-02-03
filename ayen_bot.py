@@ -11,7 +11,7 @@ EMAIL = "Sale73Li8@gmail.com"
 PASSWORD = "19961416Al"
 
 # بيانات تيليجرام
-TELEGRAM_BOT_TOKEN = "7753822380"
+TELEGRAM_BOT_TOKEN = "7753822380:AAEOJHdbI-lGKbJv0QzaSJ0RdzW0aQs4Y5k"
 CHAT_ID = "5225767276"
 
 # إنشاء كائن البوت
