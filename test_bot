@@ -1,0 +1,7 @@
+from telegram import Bot
+
+TELEGRAM_BOT_TOKEN = "7753822380:AAEOJHdbI-lGKbJv0QzaSJ0RdzW0aQs4Y5k"
+CHAT_ID = "5225767276"
+
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+bot.send_message(chat_id=CHAT_ID, text="🚀 البوت يعمل بنجاح!")
