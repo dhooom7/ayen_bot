@@ -4,8 +4,8 @@ import time
 from telegram import Bot
 
 # بيانات تسجيل الدخول
-LOGIN_URL = "https://inspector.ayen.com.sa/login"  # تأكد من صحة الرابط
-REQUESTS_URL = "https://inspector.ayen.com.sa/requests"
+LOGIN_URL = "https://inspector.ayen.app"  # ✅ رابط تسجيل الدخول الجديد
+REQUESTS_URL = "https://inspector.ayen.app/available-orders/"  # ✅ رابط الطلبات الجديد
 
 EMAIL = "Sale73Li8@gmail.com"
 PASSWORD = "19961416Al"
@@ -31,7 +31,9 @@ else:
 def check_new_requests():
     response = session.get(REQUESTS_URL)
     soup = BeautifulSoup(response.text, "html.parser")
-    requests_list = soup.find_all("div", class_="request-item")  # عدل هذا بناءً على كود HTML
+    
+    # تعديل بناءً على HTML الصفحة
+    requests_list = soup.find_all("div", class_="order-item")  # تأكد من أن الكلاس صحيح
 
     new_requests = []
     for request in requests_list:
@@ -51,4 +53,4 @@ while True:
     else:
         print("🔍 لا توجد طلبات جديدة.")
     
-    time.sleep(60)  # الفحص كل دقيقة
+    time.sleep(60)
