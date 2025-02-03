@@ -1,75 +1,54 @@
 import requests
 from bs4 import BeautifulSoup
-import smtplib
-from email.mime.text import MIMEText
 import time
-import keep_alive
+from telegram import Bot
 
 # بيانات تسجيل الدخول
 LOGIN_URL = "https://inspector.ayen.com.sa/login"  # تأكد من صحة الرابط
-REQUESTS_URL = "https://inspector.ayen.com.sa/requests"  # رابط صفحة الطلبات
-EMAIL_SENDER = "Sale73Li8@gmail.com"  # ضع بريدك هنا
-EMAIL_PASSWORD = "19961416Al"  # استخدم كلمة مرور التطبيق إذا كنت تستخدم Gmail
-EMAIL_RECEIVER = "Sale73Li8@gmail.com"  # البريد الذي ستصله التنبيهات
+REQUESTS_URL = "https://inspector.ayen.com.sa/requests"
 
-# تسجيل الدخول
+EMAIL = "Sale73Li8@gmail.com"
+PASSWORD = "19961416Al"
+
+# بيانات تيليجرام
+TELEGRAM_BOT_TOKEN = "7753822380"
+CHAT_ID = "5225767276"
+
+# إنشاء كائن البوت
+bot = Bot(token=TELEGRAM_BOT_TOKEN)
+
+# تسجيل الدخول إلى الموقع
 session = requests.Session()
-login_data = {"email": "Sale73Li8@gmail.com", "password": "19961416Al"}
+login_data = {"email": EMAIL, "password": PASSWORD}
 response = session.post(LOGIN_URL, data=login_data)
 
 if response.status_code == 200:
-    print("تم تسجيل الدخول بنجاح!")
+    print("✅ تم تسجيل الدخول بنجاح!")
 else:
-    print("فشل تسجيل الدخول! تحقق من بياناتك.")
+    print("❌ فشل تسجيل الدخول! تحقق من بياناتك.")
     exit()
 
 def check_new_requests():
     response = session.get(REQUESTS_URL)
     soup = BeautifulSoup(response.text, "html.parser")
-    requests_list = soup.find_all("div", class_="request-item")  # عدل هذا حسب HTML الموقع
-    
+    requests_list = soup.find_all("div", class_="request-item")  # عدل هذا بناءً على كود HTML
+
     new_requests = []
     for request in requests_list:
         new_requests.append(request.text.strip())
-    
+
     return new_requests
 
-def send_email(subject, message):
-    msg = MIMEText(message)
-    msg["Subject"] = subject
-    msg["From"] = EMAIL_SENDER
-    msg["To"] = EMAIL_RECEIVER
+def send_telegram_message(message):
+    bot.send_message(chat_id=CHAT_ID, text=message)
 
-    try:
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login(EMAIL_SENDER, EMAIL_PASSWORD)
-        server.sendmail(EMAIL_SENDER, EMAIL_RECEIVER, msg.as_string())
-        server.quit()
-        print("تم إرسال الإشعار بالبريد الإلكتروني!")
-    except Exception as e:
-        print("خطأ أثناء إرسال البريد:", e)
-
-# تشغيل البوت كل 5 دقائق
+# تشغيل البوت كل دقيقة
 while True:
     new_requests = check_new_requests()
     if new_requests:
-        send_email("طلب جديد!", "\n".join(new_requests))
+        message = "🚀 طلب جديد في Ayen:\n\n" + "\n".join(new_requests)
+        send_telegram_message(message)
     else:
-        print("لا توجد طلبات جديدة.")
+        print("🔍 لا توجد طلبات جديدة.")
     
-    time.sleep(60)  # فحص الموقع كل 5 دقائق
-    
-from flask import Flask
-from threading import Thread
-
-app = Flask('')
-
-@app.route('/')
-def home():
-    return "Ayen Bot is running!"
-
-def run():
-    app.run(host='0.0.0.0', port=8080)
-
-Thread(target=run).start()
+    time.sleep(60)  # الفحص كل دقيقة
